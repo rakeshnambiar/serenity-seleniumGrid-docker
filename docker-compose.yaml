@@ -36,8 +36,6 @@ services:
             - m2_home:/usr/src/mymaven
             - ./script:/var/tmp/script
         working_dir: /var/tmp/script
-        #command: "mvn clean verify -Dwebdriver.remote.url=http://selenium-hub:4444/wd/hub -Dwebdriver.remote.driver=$${REMOTE_DRIVER} -Dwebdriver.remote.os=$${REMOTE_GRID_OS} -Dwebdriver.base.url=https://www.ebi.ac.uk/ -Dtest.tagnames=$${TAG_NAME} -Dmaven.test.skip=false"
-        #command: env
         command:
           - sh
           - '-c'
