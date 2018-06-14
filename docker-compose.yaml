@@ -1,0 +1,49 @@
+version: "3"
+services:
+   selenium-hub:
+        image: selenium/hub
+        container_name: selenium-hub
+        ports:
+          - 4444:4444
+   chrome:
+        image: selenium/node-chrome
+        depends_on:
+          - selenium-hub
+        environment:
+          - HUB_HOST=selenium-hub
+          - HUB_PORT=4444
+        ports:
+          - 5910:5910
+   firefox:
+        image: selenium/node-firefox
+        depends_on:
+          - selenium-hub
+        environment:
+          - HUB_HOST=selenium-hub
+          - HUB_PORT=4444
+        ports:
+          - 5911:5911
+   jdkSetup:
+        image: java:openjdk-8
+        command: java -version
+        ports:
+          - 6060:6060
+   mvnSetup:
+        image: maven
+        env_file:
+            - ./execution-settings.env
+        volumes:
+            - m2_home:/usr/src/mymaven
+            - ./script:/var/tmp/script
+        working_dir: /var/tmp/script
+        #command: "mvn clean verify -Dwebdriver.remote.url=http://selenium-hub:4444/wd/hub -Dwebdriver.remote.driver=$${REMOTE_DRIVER} -Dwebdriver.remote.os=$${REMOTE_GRID_OS} -Dwebdriver.base.url=https://www.ebi.ac.uk/ -Dtest.tagnames=$${TAG_NAME} -Dmaven.test.skip=false"
+        #command: env
+        command:
+          - sh
+          - '-c'
+          - "mvn clean verify -Dwebdriver.remote.url=http://selenium-hub:4444/wd/hub -Dwebdriver.remote.driver=$${REMOTE_DRIVER} \
+               -Dwebdriver.remote.os=$${REMOTE_GRID_OS} -Dwebdriver.base.url=$${BASE_URL} -Dtest.tagnames=$${TAG_NAME} -Dmaven.test.skip=false"
+        ports:
+          - 7070:7070
+volumes:
+   m2_home:
